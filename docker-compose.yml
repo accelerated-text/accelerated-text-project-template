@@ -1,0 +1,43 @@
+version: '3.4'
+
+services:
+  acc-text-api:
+    image: acctext/api:latest
+    ports: ["3001:3001"]
+    environment:
+      GF_ENDPOINT: "http://gf:8000"
+      DISPLAY_ERROR: "TRUE"
+      ENABLE_ENRICH: "FALSE"
+      ENABLE_REF_EXPR: "FALSE"
+      DB_IMPLEMENTATION: "datomic"
+      DB_URI: "datomic:free://datomic-transactor:4334/acc-text?password=datomic"
+      CONFIG_PATH: "/opt/config"
+      DICT_PATH: "/opt/dictionary"
+      DOCUMENT_PLANS: "/opt/document-plans"
+      ENABLED_LANGUAGES: "Eng"
+      ENABLED_READERS: ""
+    volumes:
+      - ./config:/opt/config
+      - ./dictionary:/opt/dictionary
+      - ./document-plans:/opt/document-plans
+    depends_on:
+      - datomic-transactor
+      - gf
+  gf:
+    image: acctext/gf:latest
+  datomic-transactor:
+    image: "gordonstratton/datomic-free-transactor:latest"
+    environment:
+      DATOMIC_HOST: "datomic-transactor"
+      DATOMIC_ALT_HOST: "acc-text-api"
+    volumes:
+      - datomic:/srv/datomic/data
+      - ./resources/transactor-logback.xml:/srv/datomic/bin/logback.xml
+  front-end:
+    image: acctext/frontend:latest
+    ports: ["8088:80"]
+
+volumes:
+  datomic:
+    name: acc-text-ino_datomic
+
