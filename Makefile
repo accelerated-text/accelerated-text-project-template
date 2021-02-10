@@ -1,8 +1,8 @@
 
-run-acc-text:
+run:
 	docker-compose -p at-template down && docker-compose pull && docker-compose -p at-template up --remove-orphans
 
-clear-acc-text-db:
+clear-db:
 	docker-compose -p at-template down && docker volume rm at-template_datomic
 
 export-document-plans:
