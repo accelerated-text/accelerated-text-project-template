@@ -39,5 +39,3 @@ services:
 
 volumes:
   datomic:
-    name: acc-text-ino_datomic
-
